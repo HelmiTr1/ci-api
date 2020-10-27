@@ -56,7 +56,7 @@ class M_TempPart extends CI_Model {
     {
         $kd_dealer = $cabang;
         $query ="
-        SELECT * FROM TRANS_PARTSTOCK_VIEW WHERE KD_DEALER='T13' AND (KD_RAKBIN != '' OR KD_RAKBIN!=NULL)
+        SELECT TOP 5000 * FROM TRANS_PARTSTOCK_VIEW WHERE KD_DEALER='$kd_dealer' AND (KD_RAKBIN != '' OR KD_RAKBIN!=NULL)
         ";
         // $this->db2->limit(1);
         $result = $this->app_db->query($query)->result_array();

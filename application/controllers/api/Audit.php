@@ -1159,6 +1159,33 @@ function __construct() {
         }
 
     }
+
+    public function datapart2_get()
+    {
+        $this->mtemppart->app_db = $this->load->database($this->_getconfig(),TRUE);
+        $cekConfig = $this->mtemppart->app_db->initialize();
+        if (!$cekConfig) {
+            $this->response([
+                'status' => false,
+                'data' => "Database not connected!"
+            ], REST_Controller::HTTP_OK);
+        }else{
+                $cabang = $this->get('id_cabang');
+                $postunit = $this->mtemppart->getDatapart($cabang);
+                if ($postunit) {
+                    $this->response([
+                        'status' => true,
+                        'data' => $postunit
+                    ], REST_Controller::HTTP_OK);
+                }else{
+                    $this->response([
+                        'status' => false,
+                        'data' => "Failed to post"
+                    ], REST_Controller::HTTP_OK);
+                }
+        }
+    }
+
     public function dataunit2_get()
     {
         $this->mtempunit->app_db = $this->load->database($this->_getconfig(),TRUE);
@@ -1171,7 +1198,6 @@ function __construct() {
         }else{
             $cabang = $this->get('id_cabang');
                $postunit = $this->mtempunit->getDataUnit($cabang);
-               $i=$this->mcount->CountTempUnit();
                
                if ($postunit) {
                    $this->response([
@@ -1187,6 +1213,49 @@ function __construct() {
            
         }
 
+    }
+
+    public function dataunit2_post(){
+        $data = json_decode(file_get_contents('php://input'), true);
+        $post = array();
+        $i = 0;
+        foreach($data as $key => $val){
+            $post[$i]= $val;
+            $i++;
+        }
+        $data=[
+            'no_mesin' => $post[0],
+            'no_rangka' => $post[1],
+            'umur_unit' => '-',
+            'tahun' => $post[6],
+            'id_lokasi' => $post[3],
+            'id_cabang' => $post[2],
+            'type' => $post[5],
+            'kode_item' => $post[4],
+            'aki' => '-',
+            'spion' => '-',
+            'tools' => '-',
+            'buku_service' => '-',
+            'helm' => '-',
+            'status_unit' => $post[7],
+            'keterangan' => $post[8],
+            'is_ready' => $post[9],
+            'audit_by' => $post[10],
+            'foto' => '-',
+            'tanggal_audit' => $this->_tgl,
+        ];
+        $listaud = $this->maudit->AddList($data);
+        if ($listaud) {
+            $this->response([
+                'status' => true,
+                'data' => "created success"
+            ], REST_Controller::HTTP_OK);
+        }else{
+            $this->response([
+                'status' => false,
+                'data' => "Failed to post"
+            ], REST_Controller::HTTP_OK);
+        }
     }
 
     public function CountDataUnit_get()
